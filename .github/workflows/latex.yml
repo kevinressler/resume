@@ -5,9 +5,7 @@ on:
     branches: [ main ]
     paths:
       - "resume.tex"
-      - "assets/**"
       - ".github/workflows/latex.yml"
-      - "latexmkrc"
   workflow_dispatch:
 
 permissions:
@@ -30,14 +28,10 @@ jobs:
           # installs extra OS pkgs if needed
           extra_system_packages: fontconfig
 
-      - name: Rename/move PDF to root
-        run: |
-          # latex-action outputs resume.pdf by default (matches root_file)
-          cp resume.pdf Resume.pdf
 
       - name: Commit updated PDF to main
         uses: EndBug/add-and-commit@v9
         with:
-          add: "Resume.pdf"
-          message: "ci: update Resume.pdf"
+          add: "resume.pdf"
+          message: "ci: update resume.pdf"
           default_author: github_actions
