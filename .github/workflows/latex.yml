@@ -1,0 +1,43 @@
+name: Build & Commit PDF
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "resume.tex"
+      - "assets/**"
+      - ".github/workflows/latex.yml"
+      - "latexmkrc"
+  workflow_dispatch:
+
+permissions:
+  contents: write   # allow committing back to the repo
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Compile LaTeX with latexmk (XeLaTeX)
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: resume.tex
+          latexmk_use_xelatex: true
+          # installs extra OS pkgs if needed
+          extra_system_packages: fontconfig
+
+      - name: Rename/move PDF to root
+        run: |
+          # latex-action outputs resume.pdf by default (matches root_file)
+          cp resume.pdf Resume.pdf
+
+      - name: Commit updated PDF to main
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: "Resume.pdf"
+          message: "ci: update Resume.pdf"
+          default_author: github_actions
